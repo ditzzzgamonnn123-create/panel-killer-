@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FF PANEL GACOR - FULLSCREEN</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+        
+        body {
+            background: transparent;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .panel-container {
+            width: 100vw;
+            height: 100vh;
+            background: rgba(10, 20, 10, 0.9);
+            backdrop-filter: blur(10px);
+            border: 2px solid #00ff00;
+            padding: 15px;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.5);
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Drag handle */
+        .drag-handle {
+            width: 100%;
+            height: 30px;
+            background: #00ff00;
+            border-radius: 15px 15px 0 0;
+            margin: -15px -15px 15px -15px;
+            width: calc(100% + 30px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: black;
+            font-weight: bold;
+            cursor: move;
+            border-bottom: 2px solid #00ff00;
+        }
+        
+        .title {
+            text-align: center;
+            color: #00ff00;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-shadow: 0 0 15px #00ff00;
+            font-family: monospace;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .feature-btn {
+            background: rgba(0, 40, 0, 0.8);
+            border: 2px solid #00ff00;
+            color: #00ff00;
+            padding: 12px 5px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            font-family: monospace;
+        }
+        
+        .feature-btn.active {
+            background: #00ff00;
+            color: black;
+            box-shadow: 0 0 20px #00ff00;
+        }
+        
+        .feature-btn:hover {
+            background: #00ff00;
+            color: black;
+            transform: scale(0.95);
+        }
+        
+        .slider-container {
+            margin: 15px 0;
+        }
+        
+        .slider-label {
+            color: #00ff00;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-family: monospace;
+        }
+        
+        input[type=range] {
+            width: 100%;
+            height: 10px;
+            background: #0a1a0a;
+            border-radius: 5px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #00ff00;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 15px #00ff00;
+        }
+        
+        .footer-note {
+            color: #00ff00;
+            font-size: 10px;
+            text-align: center;
+            margin-top: 10px;
+            opacity: 0.7;
+            font-family: monospace;
+        }
+        
+        .status-bar {
+            background: rgba(0, 20, 0, 0.9);
+            border: 1px solid #00ff00;
+            border-radius: 5px;
+            padding: 5px;
+            margin: 10px 0;
+            color: #00ff00;
+            text-align: center;
+            font-size: 12px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="panel-container" id="draggablePanel">
+        <div class="drag-handle" id="dragHandle"> KILELR PANEL V6 </div>
+        
+        <div class="title"> KILLER VOIDS EDITION</div>
+        
+        <div class="feature-grid">
+            <div class="feature-btn" onclick="toggleFeature(this, 'autoaim')">AUTO AIM</div>
+            <div class="feature-btn" onclick="toggleFeature(this, 'noreload')">AIMLOCK 70%</div>
+            <div class="feature-btn" onclick="toggleFeature(this, 'headshot')">HEADSHOT</div>
+            <div class="feature-btn" onclick="toggleFeature(this, 'speed')">AIMLOCK 75%</div>
+            <div class="feature-btn" onclick="toggleFeature(this, 'wallhack')"> STABILIZER 80%</div>
+            <div class="feature-btn" onclick="toggleFeature(this, 'antena')">AIMLOCK 50%</div>
+            <div class="feature-btn" onclick="toggleFeature(this, 'flight')">AIMLOCK 90%</div>
+            <div class="feature-btn" onclick="toggleFeature(this, 'damage')">DAMAGE +</div>
+        </div>
+        
+        <div class="slider-container">
+            <div class="slider-label">
+                <span> AIM SMOOTHNESS</span>
+                <span id="aimValue">70%</span>
+            </div>
+            <input type="range" min="0" max="100" value="70" id="aimSlider" oninput="updateAim(this.value)">
+        </div>
+        
+        <div class="slider-container">
+            <div class="slider-label">
+                <span>AIM DISTANCE</span>
+                <span id="distanceValue">150m</span>
+            </div>
+            <input type="range" min="10" max="300" value="150" id="distanceSlider" oninput="updateDistance(this.value)">
+        </div>
+        
+        <div class="status-bar" id="statusBar">
+
+        </div>
+        
+        <div style="display: flex; gap: 10px;">
+            <div class="feature-btn" style="flex: 1; background: #00ff00; color: black;" onclick="activateAll()">
+                🔥 ACTIVATE ALL
+            </div>
+            <div class="feature-btn" style="flex: 1; border-color: #ff4444; color: #ff4444;" onclick="deactivateAll()">
+                ⚡ DEACTIVATE
+            </div>
+        </div>
+        
+        <div class="footer-note">
+            
+        </div>
+    </div>
+    
+    <script>
+        // Fungsi drag panel (biar bisa digeser)
+        const panel = document.getElementById('draggablePanel');
+        const dragHandle = document.getElementById('dragHandle');
+        let isDragging = false;
+        let offsetX, offsetY;
+        
+        dragHandle.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            offsetX = e.clientX - panel.offsetLeft;
+            offsetY = e.clientY - panel.offsetTop;
+            panel.style.cursor = 'grabbing';
+        });
+        
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                panel.style.left = (e.clientX - offsetX) + 'px';
+                panel.style.top = (e.clientY - offsetY) + 'px';
+            }
+        });
+        
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            panel.style.cursor = 'default';
+        });
+        
+        // Fungsi toggle fitur
+        function toggleFeature(btn, feature) {
+            btn.classList.toggle('active');
+            const status = btn.classList.contains('active') ? 'ON' : 'OFF';
+            
+            document.getElementById('statusBar').innerHTML = 
+                `🟢 ${feature.toUpperCase()} ${status}`;
+            
+            // Ini cuma simulasi (untuk real butuh injector)
+            console.log(`[FF PANEL] ${feature} toggled: ${status}`);
+        }
+        
+        function updateAim(val) {
+            document.getElementById('aimValue').innerHTML = val + '%';
+        }
+        
+        function updateDistance(val) {
+            document.getElementById('distanceValue').innerHTML = val + 'm';
+        }
+        
+        function activateAll() {
+            const btns = document.querySelectorAll('.feature-btn');
+            btns.forEach(btn => {
+                if (!btn.classList.contains('active')) {
+                    btn.classList.add('active');
+                }
+            });
+            document.getElementById('statusBar').innerHTML = '🟢 ALL FEATURES ACTIVATED';
+        }
+        
+        function deactivateAll() {
+            const btns = document.querySelectorAll('.feature-btn');
+            btns.forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById('statusBar').innerHTML = '🔴 ALL FEATURES DEACTIVATED';
+        }
+    </script>
+</body>
+</html>
